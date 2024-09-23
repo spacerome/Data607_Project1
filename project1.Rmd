@@ -1,0 +1,119 @@
+---
+title: "Data607 - Project 1: Chess Tournament Results"
+author: "Anthony Josue Roman"
+date: "2024-09-22"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r include=FALSE}
+library(readr)
+library(stringr)
+library(dplyr)
+library(tidyr)
+library(tidyverse)
+```
+
+This project will use the following packages:
+
+```{r eval=FALSE}
+library(readr)
+library(stringr)
+library(dplyr)
+library(tidyr)
+library(tidyverse)
+```
+
+## General Overview
+
+This file will be available on my [GitHub Page](https://github.com/spacerome/Data607_Project1).
+
+This project will primarily focus on manipulating a dataset from a `.txt` file named `tournamentinfo.txt`. This `rmd` file will create a `.csv` file after analyzing the data within the file.
+
+## Chess Tournament Results Extraction
+
+Initially we will extract the following data from the `.txt` file to prepare to analyze the data before exporting it into a `.csv` file.
+
+```{r echo=TRUE}
+
+a <- getwd() # Just to set directory
+setwd(a)
+
+# Now use this function to load the data
+tournamentData <- suppressWarnings(readLines("tournamentinfo.txt"))
+
+# Preview the data after removing the first four lines
+head(tournamentData)
+
+```
+## Initializations
+
+The following code blocks will be using the following data from  `tournamentData` and converting it into two matrices for manipulation, `d1` will consist of the names and `d2` will consist of the other values which we will use later on.
+
+```{r echo = TRUE}
+tdm <- matrix(unlist(tournamentData), byrow = TRUE)
+
+d1 <- tdm[seq(5, length(tdm),3)]
+
+head(d1)
+```
+
+```{r echo = TRUE}
+d2 <- tdm[seq(6, length(tdm),3)]
+
+head(d2)
+```
+## String Manipulation
+
+The following code block will modify the following strings for us to utilize the following variables `playerName` for player name, `playerState` for the state of the player, `totalPoints` for the total points of the player, `preRating` for the pre-rating, and `numRounds` for the number of rounds. This will be utilized to help us initialize the data to calculate the Average rating of the player's opponents. The following matrices `d1` and `d2` will be utilized here for the values for each variable such as `playerName`, `playerState`, `totalPoints`, `preRating`, and `numRounds`.
+
+```{r echo = TRUE}
+playerNum <- as.numeric(str_extract(d1, '\\d+'))
+pName <- str_extract(d1, '[A-z].{1,32}')
+playerName <- str_trim(str_extract(pName, '.+\\s{2,}'))
+playerState <- str_extract(d2, '[A-Z]{2}')
+totalPoints <- as.numeric(str_extract(d1, '\\d+\\.\\d'))
+preRatingraw <- str_extract(d2,'R:.{8,}-')
+preRating <- as.numeric(str_extract(preRatingraw, '\\d{1,4}'))
+numRoundsraw <- suppressWarnings(str_extract_all(d1,'[A-Z]\\s{2,}\\d+'))
+numRounds <- suppressWarnings(str_extract_all(numRoundsraw, '\\d+'))
+```
+
+## Average Chess Opponent Ratings
+
+The following code block here will calculate the average chess opponent ratings for each player by utilizing a for loop where it calculates the mean value for each player. The value will be stored in `avg_chess_opp_rating` where `i` is the location for each player. 
+
+```{r echo = TRUE}
+avg_chess_opp_rating <- c()
+
+for(i in c(1:length(numRounds))){
+  avg_chess_opp_rating[i] <- round(mean(preRating[as.numeric(numRounds[[i]])]),0)
+}
+
+head(avg_chess_opp_rating)
+```
+
+## Modified Tournament Data
+
+After getting the ratings, the following values are then exported into `modifiedtournamentData` to be prepared to be exported into a csv file. The following values will be stored into a data frame: `playerName`, `playerState`, `totalPoints`, `preRating`, and `avg_chess_opp_rating`. 
+
+```{r echo = TRUE}
+modifiedtournamentData <- data.frame(playerName, playerState, totalPoints, preRating, avg_chess_opp_rating)
+
+head(modifiedtournamentData)
+```
+
+## Export Data to CSV
+
+Lastly, the code block will export the values into a `.csv` file named `new_tournament_info.csv`. 
+
+```{r echo = TRUE}
+write.csv(modifiedtournamentData, file = "new_tournament_info.csv")
+```
+
+## Conclusion
+
+Overall, this project was not that bad, I did attempt utilizing a function, which kept failing and kept outputing its values incorrectly after the first part, so I made it simpler. To make the function work, I will continue to troubleshoot it to make it perform better, and it will be included in my GitHub Page.
