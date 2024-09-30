@@ -378,11 +378,8 @@ analyzing the data within the file.</p>
 <p>Initially we will extract the following data from the
 <code>.txt</code> file to prepare to analyze the data before exporting
 it into a <code>.csv</code> file.</p>
-<pre class="r"><code>a &lt;- getwd() # Just to set directory
-setwd(a)
-
-# Now use this function to load the data
-tournamentData &lt;- suppressWarnings(readLines(&quot;tournamentinfo.txt&quot;))
+<pre class="r"><code># Now use this function to load the data
+tournamentData &lt;- suppressWarnings(readLines(&quot;https://raw.githubusercontent.com/spacerome/Data607_Project1/refs/heads/main/tournamentinfo.txt&quot;))
 
 # Preview the data after removing the first four lines
 head(tournamentData)</code></pre>

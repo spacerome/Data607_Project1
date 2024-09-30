@@ -39,11 +39,8 @@ Initially we will extract the following data from the `.txt` file to prepare to 
 
 ```{r echo=TRUE}
 
-a <- getwd() # Just to set directory
-setwd(a)
-
 # Now use this function to load the data
-tournamentData <- suppressWarnings(readLines("tournamentinfo.txt"))
+tournamentData <- suppressWarnings(readLines("https://raw.githubusercontent.com/spacerome/Data607_Project1/refs/heads/main/tournamentinfo.txt"))
 
 # Preview the data after removing the first four lines
 head(tournamentData)
